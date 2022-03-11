@@ -31,7 +31,7 @@ public class TasksQuickstart {
      * Global instance of the scopes required by this quickstart.
      * If modifying these scopes, delete your previously saved tokens/ folder.
      */
-    private static final List<String> SCOPES = Collections.singletonList(TasksScopes.TASKS_READONLY);
+    private static final List<String> SCOPES = Collections.singletonList(TasksScopes.TASKS);
     private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
 
     /**
