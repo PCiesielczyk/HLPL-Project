@@ -14,15 +14,20 @@ import com.google.api.services.tasks.model.Task;
 import com.google.api.services.tasks.model.TaskList;
 import com.google.api.services.tasks.model.TaskLists;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import javafx.application.Application;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class TasksQuickstart {
+public class TasksQuickstart extends Application{
     private static final String APPLICATION_NAME = "Google Tasks API Java Quickstart";
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
     private static final String TOKENS_DIRECTORY_PATH = "tokens";
@@ -58,6 +63,8 @@ public class TasksQuickstart {
         return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
     }
 
+    private static final ArrayList<TaskCreator> tasksToShow = new ArrayList<TaskCreator>();
+
     public static void main(String... args) throws IOException, GeneralSecurityException {
         // Build a new authorized API client service.
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
@@ -66,6 +73,14 @@ public class TasksQuickstart {
                 .setApplicationName(APPLICATION_NAME)
                 .build();
 
+        /* Creating task
+        Task task = new Task();
+        task.setTitle("NOWY TASK");
+        task.setDue("2022-04-12T23:20:50.52Z");
+
+        Tasks.TasksOperations.Insert newOne = service.tasks().insert("@default", task);
+        newOne.execute();*/
+
         // Print the first 10 task lists.
         TaskLists result = service.tasklists().list()
                 .setMaxResults(10)
@@ -73,7 +88,7 @@ public class TasksQuickstart {
         List<TaskList> taskLists = result.getItems();
 
         List<Task> tasks = service.tasks()
-                .list("@default")
+                .list("@default")   //here goes TaskId
                 .setFields("items(title,notes,status,due)")
                 .execute()
                 .getItems();
@@ -81,7 +96,7 @@ public class TasksQuickstart {
         if (taskLists == null || taskLists.isEmpty()) {
             System.out.println("Brak list zadań");
         } else {
-            System.out.println("Listy zadań");
+            System.out.println("Listy zadań: ");
             for (TaskList tasklist : taskLists) {
                 System.out.println("------" + tasklist.getTitle() + "-------------");
             }
@@ -90,10 +105,38 @@ public class TasksQuickstart {
         if (tasks == null || tasks.isEmpty()) {
             System.out.println("Brak zadań");
         } else {
-            System.out.println("Zadania");
+            System.out.println("Zadania: ");
             for (Task tasksInTasks : tasks) {
-                System.out.println("======" + tasksInTasks.getTitle() + "=========");
+                PrintStream out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+                out.println(tasksInTasks.getTitle());
+
+                TaskCreator taskCreator = new TaskCreator(tasksInTasks.getTitle(),
+                        tasksInTasks.getDue(), tasksInTasks.getNotes());
+                tasksToShow.add(taskCreator);
             }
         }
+
+        launch(args);
+    }
+
+    @Override
+    public void start(Stage stage) throws Exception {
+
+        Group root = new Group();
+        Scene scene = new Scene(root, 600, 600);
+        int x = 50;
+        int y = 50;
+
+        for (TaskCreator taskCreator : tasksToShow) {
+            Text text = new Text();
+            text.setText(taskCreator.getTitle() + " | " + taskCreator.getDetails() + " | " + taskCreator.getLocalDateTime());
+            text.setX(x);
+            text.setY(y);
+            root.getChildren().add(text);
+            y += 50;
+        }
+
+        stage.setScene(scene);
+        stage.show();
     }
 }

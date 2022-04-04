@@ -1,3 +1,7 @@
+plugins {
+    id "org.openjfx.javafxplugin" version "0.0.12"
+}
+
 apply plugin: 'java'
 apply plugin: 'application'
 
@@ -14,4 +18,9 @@ dependencies {
     implementation 'com.google.api-client:google-api-client:1.33.0'
     implementation 'com.google.oauth-client:google-oauth-client-jetty:1.32.1'
     implementation 'com.google.apis:google-api-services-tasks:v1-rev20210709-1.32.1'
+}
+
+javafx {
+    version = "17.0.1"
+    modules = [ 'javafx.controls' ]
 }
