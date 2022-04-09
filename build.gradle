@@ -6,8 +6,8 @@ apply plugin: 'java'
 apply plugin: 'application'
 
 mainClassName = 'TasksQuickstart'
-sourceCompatibility = 11
-targetCompatibility = 11
+sourceCompatibility = 15
+targetCompatibility = 15
 version = '1.0'
 
 repositories {
@@ -18,6 +18,7 @@ dependencies {
     implementation 'com.google.api-client:google-api-client:1.33.0'
     implementation 'com.google.oauth-client:google-oauth-client-jetty:1.32.1'
     implementation 'com.google.apis:google-api-services-tasks:v1-rev20210709-1.32.1'
+    implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.18'
 }
 
 javafx {

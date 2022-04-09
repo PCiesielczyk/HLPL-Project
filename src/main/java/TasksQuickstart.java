@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import java.sql.*;
+
 public class TasksQuickstart extends Application{
     private static final String APPLICATION_NAME = "Google Tasks API Java Quickstart";
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
@@ -65,13 +67,25 @@ public class TasksQuickstart extends Application{
 
     private static final ArrayList<TaskCreator> tasksToShow = new ArrayList<TaskCreator>();
 
-    public static void main(String... args) throws IOException, GeneralSecurityException {
+    public static void main(String... args) throws IOException, GeneralSecurityException, SQLException {
         // Build a new authorized API client service.
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
 
         Tasks service = new Tasks.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
                 .setApplicationName(APPLICATION_NAME)
                 .build();
+
+        // Database connection
+//        Connection connection = null;
+//        try {
+//            connection = DriverManager
+//                    .getConnection("jdbc:postgresql://localhost:5432/postgres",
+//                            "postgres", "postgres");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            System.err.println(e.getClass().getName()+": "+e.getMessage());
+//            System.exit(0);
+//        }
 
         /* Creating task
         Task task = new Task();
@@ -89,7 +103,9 @@ public class TasksQuickstart extends Application{
 
         List<Task> tasks = service.tasks()
                 .list("@default")   //here goes TaskId
-                .setFields("items(title,notes,status,due)")
+                .setShowCompleted(true)
+                .setShowHidden(true)
+                .setFields("items(id,title,notes,status,due,parent,position)")
                 .execute()
                 .getItems();
 
@@ -102,6 +118,8 @@ public class TasksQuickstart extends Application{
             }
         }
 
+
+
         if (tasks == null || tasks.isEmpty()) {
             System.out.println("Brak zadań");
         } else {
@@ -110,17 +128,22 @@ public class TasksQuickstart extends Application{
                 PrintStream out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
                 out.println(tasksInTasks.getTitle());
 
-                TaskCreator taskCreator = new TaskCreator(tasksInTasks.getTitle(),
+
+                TaskCreator taskCreator = new TaskCreator(tasksInTasks.getId(), tasksInTasks.getTitle(),
                         tasksInTasks.getDue(), tasksInTasks.getNotes());
                 tasksToShow.add(taskCreator);
+
+                // insert query execution
+//                Statement statement = connection.createStatement();
+//                statement.executeUpdate(insertQuery);
+
             }
         }
-
         launch(args);
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
 
         Group root = new Group();
         Scene scene = new Scene(root, 600, 600);
@@ -129,7 +152,9 @@ public class TasksQuickstart extends Application{
 
         for (TaskCreator taskCreator : tasksToShow) {
             Text text = new Text();
-            text.setText(taskCreator.getTitle() + " | " + taskCreator.getDetails() + " | " + taskCreator.getLocalDateTime());
+            text.setText(taskCreator.getTitle() + " | " +
+                    taskCreator.getDetails() + " | " +
+                    taskCreator.getLocalDateTime());
             text.setX(x);
             text.setY(y);
             root.getChildren().add(text);
