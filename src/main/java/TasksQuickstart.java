@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.List;
 
 import java.sql.*;
+import java.util.Random;
 
 public class TasksQuickstart extends Application{
     private static final String APPLICATION_NAME = "Google Tasks API Java Quickstart";
@@ -65,27 +66,28 @@ public class TasksQuickstart extends Application{
         return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
     }
 
-    private static final ArrayList<TaskCreator> tasksToShow = new ArrayList<TaskCreator>();
+    private static final ArrayList<TaskCreator> tasksToShow = new ArrayList<>();
 
     public static void main(String... args) throws IOException, GeneralSecurityException, SQLException {
         // Build a new authorized API client service.
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
+        PrintStream out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
         Tasks service = new Tasks.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
                 .setApplicationName(APPLICATION_NAME)
                 .build();
 
-        // Database connection
-//        Connection connection = null;
-//        try {
-//            connection = DriverManager
-//                    .getConnection("jdbc:postgresql://localhost:5432/postgres",
-//                            "postgres", "postgres");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            System.err.println(e.getClass().getName()+": "+e.getMessage());
-//            System.exit(0);
-//        }
+         // Database connection
+        Connection connection = null;
+        try {
+            connection = DriverManager
+                    .getConnection("jdbc:postgresql://localhost:5432/postgres",
+                            "postgres", "postgres");
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println(e.getClass().getName()+": "+e.getMessage());
+            System.exit(0);
+        }
 
         /* Creating task
         Task task = new Task();
@@ -95,11 +97,11 @@ public class TasksQuickstart extends Application{
         Tasks.TasksOperations.Insert newOne = service.tasks().insert("@default", task);
         newOne.execute();*/
 
-        // Print the first 10 task lists.
-        TaskLists result = service.tasklists().list()
+
+        /*TaskLists result = service.tasklists().list()
                 .setMaxResults(10)
                 .execute();
-        List<TaskList> taskLists = result.getItems();
+        List<TaskList> taskLists = result.getItems();*/
 
         List<Task> tasks = service.tasks()
                 .list("@default")   //here goes TaskId
@@ -109,34 +111,27 @@ public class TasksQuickstart extends Application{
                 .execute()
                 .getItems();
 
-        if (taskLists == null || taskLists.isEmpty()) {
-            System.out.println("Brak list zadań");
-        } else {
-            System.out.println("Listy zadań: ");
-            for (TaskList tasklist : taskLists) {
-                System.out.println("------" + tasklist.getTitle() + "-------------");
-            }
-        }
-
-
-
         if (tasks == null || tasks.isEmpty()) {
-            System.out.println("Brak zadań");
+            System.out.println("No tasks");
         } else {
-            System.out.println("Zadania: ");
-            for (Task tasksInTasks : tasks) {
-                PrintStream out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-                out.println(tasksInTasks.getTitle());
+            for (Task tasksInList : tasks) {
 
+                TaskCreator taskCreator = new TaskCreator(tasksInList.getId(), tasksInList.getTitle(),
+                        TaskCreator.timeFormat(tasksInList.getDue()), tasksInList.getNotes(), tasksInList.getCompleted(),
+                        tasksInList.getParent());
 
-                TaskCreator taskCreator = new TaskCreator(tasksInTasks.getId(), tasksInTasks.getTitle(),
-                        tasksInTasks.getDue(), tasksInTasks.getNotes());
                 tasksToShow.add(taskCreator);
 
                 // insert query execution
-//                Statement statement = connection.createStatement();
-//                statement.executeUpdate(insertQuery);
+                Statement statement = connection.createStatement();
+                //statement.executeUpdate(DatabaseQueries.insertQuery(taskCreator.getId(), taskCreator.getPriority()));
+            }
+        }
 
+        for (TaskCreator task : tasksToShow) {
+            if (task.getLocalDateTime() != null) {
+                out.print(task.getTitle() + " - ");
+                System.out.println(TaskCreator.remainingTime(task.getLocalDateTime()));
             }
         }
         launch(args);
