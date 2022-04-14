@@ -88,6 +88,7 @@ public class TasksQuickstart extends Application{
             System.err.println(e.getClass().getName()+": "+e.getMessage());
             System.exit(0);
         }
+        Statement statement = connection.createStatement();
 
         /* Creating task
         Task task = new Task();
@@ -123,10 +124,20 @@ public class TasksQuickstart extends Application{
                 tasksToShow.add(taskCreator);
 
                 // insert query execution
-                Statement statement = connection.createStatement();
                 //statement.executeUpdate(DatabaseQueries.insertQuery(taskCreator.getId(), taskCreator.getPriority()));
             }
+            loadPriorities(statement.executeQuery(DatabaseQueries.selectQuery()));
         }
+        /*//change 4 tasks' priority
+        tasksToShow.stream()
+                .limit(4)
+                .forEach(taskCreator -> taskCreator.setPriority(2));
+        //set priority in db
+        for (TaskCreator taskCreator : tasksToShow) {
+            System.out.println(taskCreator.getPriority());
+            System.out.println(taskCreator.getId());
+            statement.executeUpdate((DatabaseQueries.updateQuery(taskCreator.getId(), taskCreator.getPriority())));
+        }*/
 
         for (TaskCreator task : tasksToShow) {
             if (task.getLocalDateTime() != null) {
@@ -148,7 +159,7 @@ public class TasksQuickstart extends Application{
         for (TaskCreator taskCreator : tasksToShow) {
             Text text = new Text();
             text.setText(taskCreator.getTitle() + " | " +
-                    taskCreator.getDetails() + " | " +
+                    taskCreator.getPriority() + " | " +
                     taskCreator.getLocalDateTime());
             text.setX(x);
             text.setY(y);
@@ -158,5 +169,25 @@ public class TasksQuickstart extends Application{
 
         stage.setScene(scene);
         stage.show();
+    }
+
+    private static void loadPriorities (ResultSet rs) throws SQLException {
+
+        while (rs.next()) {
+
+            String id = rs.getString("id");
+            int priority = rs.getInt("priority");
+
+            boolean isPresent = tasksToShow.stream()
+                            .anyMatch(task -> task.getId().equals(id));
+
+            if (isPresent) {
+                tasksToShow.stream()
+                        .filter(task -> task.getId().equals(id))
+                        .findFirst()
+                        .get()
+                        .setPriority(priority);
+            }
+        }
     }
 }
