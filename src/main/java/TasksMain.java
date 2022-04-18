@@ -11,14 +11,12 @@ import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.tasks.Tasks;
 import com.google.api.services.tasks.TasksScopes;
 import com.google.api.services.tasks.model.Task;
-import com.google.api.services.tasks.model.TaskList;
-import com.google.api.services.tasks.model.TaskLists;
 
 import javafx.application.Application;
-import javafx.scene.Group;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.fxml.FXMLLoader;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -28,9 +26,8 @@ import java.util.Collections;
 import java.util.List;
 
 import java.sql.*;
-import java.util.Random;
 
-public class TasksQuickstart extends Application{
+public class TasksMain extends Application{
     private static final String APPLICATION_NAME = "Google Tasks API Java Quickstart";
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
     private static final String TOKENS_DIRECTORY_PATH = "tokens";
@@ -50,7 +47,7 @@ public class TasksQuickstart extends Application{
      */
     private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
         // Load client secrets.
-        InputStream in = TasksQuickstart.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
+        InputStream in = TasksMain.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
         if (in == null) {
             throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
         }
@@ -66,7 +63,7 @@ public class TasksQuickstart extends Application{
         return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
     }
 
-    private static final ArrayList<TaskCreator> tasksToShow = new ArrayList<>();
+    public static final ArrayList<TaskCreator> tasksToShow = new ArrayList<>();
 
     public static void main(String... args) throws IOException, GeneralSecurityException, SQLException {
         // Build a new authorized API client service.
@@ -76,19 +73,6 @@ public class TasksQuickstart extends Application{
         Tasks service = new Tasks.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
                 .setApplicationName(APPLICATION_NAME)
                 .build();
-
-         // Database connection
-        Connection connection = null;
-        try {
-            connection = DriverManager
-                    .getConnection("jdbc:postgresql://localhost:5432/postgres",
-                            "postgres", "postgres");
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println(e.getClass().getName()+": "+e.getMessage());
-            System.exit(0);
-        }
-        Statement statement = connection.createStatement();
 
         /* Creating task
         Task task = new Task();
@@ -124,9 +108,9 @@ public class TasksQuickstart extends Application{
                 tasksToShow.add(taskCreator);
 
                 // insert query execution
-                //statement.executeUpdate(DatabaseQueries.insertQuery(taskCreator.getId(), taskCreator.getPriority()));
+               DatabaseQueries.insertTask(taskCreator.getId(), taskCreator.getPriority());
             }
-            loadPriorities(statement.executeQuery(DatabaseQueries.selectQuery()));
+            DatabaseQueries.loadPriorities();
         }
         /*//change 4 tasks' priority
         tasksToShow.stream()
@@ -149,45 +133,12 @@ public class TasksQuickstart extends Application{
     }
 
     @Override
-    public void start(Stage stage) {
+    public void start(Stage stage) throws IOException {
 
-        Group root = new Group();
-        Scene scene = new Scene(root, 600, 600);
-        int x = 50;
-        int y = 50;
-
-        for (TaskCreator taskCreator : tasksToShow) {
-            Text text = new Text();
-            text.setText(taskCreator.getTitle() + " | " +
-                    taskCreator.getPriority() + " | " +
-                    taskCreator.getLocalDateTime());
-            text.setX(x);
-            text.setY(y);
-            root.getChildren().add(text);
-            y += 50;
-        }
-
-        stage.setScene(scene);
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/SceneBuilderTest.fxml"));
+        Parent root =  loader.load();
+        stage.setTitle("Testing one two");
+        stage.setScene(new Scene(root));
         stage.show();
-    }
-
-    private static void loadPriorities (ResultSet rs) throws SQLException {
-
-        while (rs.next()) {
-
-            String id = rs.getString("id");
-            int priority = rs.getInt("priority");
-
-            boolean isPresent = tasksToShow.stream()
-                            .anyMatch(task -> task.getId().equals(id));
-
-            if (isPresent) {
-                tasksToShow.stream()
-                        .filter(task -> task.getId().equals(id))
-                        .findFirst()
-                        .get()
-                        .setPriority(priority);
-            }
-        }
     }
 }

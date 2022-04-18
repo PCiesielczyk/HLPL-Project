@@ -88,6 +88,14 @@ public class TaskCreator {
         this.priority = priority;
     }
 
+    public String toString() {
+        if (getParent() == null) {
+            return getTitle() + " | " + getPriority() + " | " + remainingTime(getLocalDateTime());
+        } else {
+            return getTitle();
+        }
+    }
+
     public static LocalDateTime timeFormat(String dateString) {
 
         if (dateString == null) {

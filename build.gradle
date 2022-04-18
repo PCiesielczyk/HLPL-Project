@@ -5,9 +5,10 @@ plugins {
 apply plugin: 'java'
 apply plugin: 'application'
 
-mainClassName = 'TasksQuickstart'
+mainClassName = 'TasksMain'
 sourceCompatibility = 15
 targetCompatibility = 15
+
 version = '1.0'
 
 repositories {
@@ -23,5 +24,5 @@ dependencies {
 
 javafx {
     version = "17.0.1"
-    modules = [ 'javafx.controls' ]
+    modules = [ 'javafx.controls', 'javafx.fxml' ]
 }
