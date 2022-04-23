@@ -1,0 +1,145 @@
+.vbox{
+    -fx-background-color: #0d66d9;
+}
+
+.menuButton{
+    -fx-background-color: #0d66d9;
+    -fx-font-size: 18;
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: 600;
+}
+.menuButton:hover{
+    -fx-background-color: #0e57bb;
+}
+.addButton{
+    -fx-border-radius: 16px;
+    -fx-background-radius: 16px;
+    -fx-background-color: #ffffff;
+    -fx-font-size: 18;
+    -fx-text-fill: #0d66d9;
+    -fx-font-weight: 600;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10,0,0,0);
+}
+.addButton:hover{
+    -fx-background-color: #ececec;
+    -fx-fill: #ffffff;
+}
+.titleLabel{
+    -fx-font-size: 40;
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: 700;
+}
+.taskListLabel{
+    -fx-font-size: 20;
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: 600;
+}
+.topPane{
+    -fx-background-color: #6ab8f5;
+}
+.taskRow{
+    -fx-background-color: #ffffff;
+    -fx-border-width: 1px;
+    -fx-border-color: #ababab;
+}
+.check-box .box{
+    -fx-font-size: 16;
+    -fx-border-radius: 16px;
+    -fx-background-radius: 16px;
+    -fx-background-color: white;
+    -fx-border-width: 1px;
+    -fx-border-color: #000000;
+}
+.editTaskButton{
+    -fx-background-color: #ffffff;
+    -fx-font-size: 18;
+    -fx-text-fill: #000000;
+}
+.check-box:selected .mark {
+    -fx-background-color: #0d66d9;
+}
+.text-field{
+    -fx-border-color: grey;
+    -fx-border-width: 0 0 0 0;
+    -fx-background-color: transparent;
+}
+.text-field:hover{
+    -fx-background-color: #eaeaea;
+}
+.text-field:focused{
+    -fx-border-width: 0 0 1 0;
+}
+.priority-check-box .box{
+    -fx-font-size: 10;
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
+    -fx-background-color: white;
+    -fx-border-width: 1px;
+    -fx-border-color: #ababab;
+}
+.priority-check-box:selected .box{
+    -fx-background-color: #0d66d9;
+}
+.priority-check-box:selected .mark{
+    -fx-background-color: #0d66d9;
+}
+.priority-button{
+    -fx-font-size: 4;
+    -fx-pref-width: 18;
+    -fx-pref-height: 18;
+    -fx-background-color: #ffffff;
+    -fx-border-radius: 40px;
+    -fx-background-radius: 40px;
+    -fx-border-color: #111;
+}
+.date-button{
+    -fx-background-color: white;
+    -fx-border-color: white;
+}
+.date-button:hover{
+    -fx-background-color: #eeeeee;
+    -fx-border-color: #eeeeee;
+}
+.add-subTask-button{
+    -fx-border-radius: 16px;
+    -fx-background-radius: 16px;
+    -fx-background-color: #ffffff;
+    -fx-font-size: 12;
+    -fx-text-fill: #0d66d9;
+    -fx-font-weight: 600;
+    -fx-border-width: 1px;
+    -fx-border-color: #000000;
+}
+.add-subTask-button:hover{
+    -fx-background-color: #ececec;
+    -fx-fill: #ffffff;
+}
+.anchor-pane-subTask{
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
+    -fx-background-color: #3545e7;
+}
+.check-box-sub .box{
+    -fx-font-size: 14;
+    -fx-background-radius: 14px;
+    -fx-border-radius: 0px;
+    -fx-border-width: 0px;
+    -fx-background-color: white;
+}
+.check-box-sub:selected .mark {
+    -fx-background-color: #000000;
+}
+.text-field-sub{
+    -fx-border-color: #ffffff;
+    -fx-border-width: 0 0 0 0;
+    -fx-background-color: transparent;
+    -fx-font-weight: 700;
+    -fx-font-size: 14;
+    -fx-text-fill: #ffffff;
+}
+.text-field-sub:focused{
+    -fx-border-width: 0 0 1 0;
+}
+.text-field-sub:hover{
+    -fx-background-color: #4f5de7;
+}
