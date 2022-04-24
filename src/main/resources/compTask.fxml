@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+
+<AnchorPane fx:id="anchorPane" prefHeight="43.0" prefWidth="544.0" styleClass="taskRow" stylesheets="@style.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.CompTaskController">
+    <children>
+        <Button fx:id="extendBtn" layoutX="518.0" layoutY="2.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="33.0" styleClass="editTaskButton" AnchorPane.leftAnchor="518.0" AnchorPane.rightAnchor="15.0">
+            <graphic>
+                <FontAwesomeIcon fx:id="fontAwIcon" glyphName="ARROW_CIRCLE_DOWN" styleClass="editTaskButton">
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </FontAwesomeIcon>
+            </graphic>
+        </Button>
+        <CheckBox fx:id="checkBoxTask" disable="true" layoutX="24.0" layoutY="3.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="24.0" selected="true" stylesheets="@style.css">
+            <cursor>
+                <Cursor fx:constant="HAND" />
+            </cursor>
+        </CheckBox>
+        <GridPane fx:id="gridSubTask" layoutY="46.0" prefHeight="0.0" prefWidth="46.0">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            </columnConstraints>
+        </GridPane>
+        <TextField fx:id="textField" editable="false" layoutX="59.0" layoutY="11.0" prefWidth="150.0" promptText="Title" />
+        <Button fx:id="prioBtn1" disable="true" layoutX="240.0" layoutY="15.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="24.0" styleClass="priority-button">
+            <cursor>
+                <Cursor fx:constant="HAND" />
+            </cursor>
+        </Button>
+        <Button fx:id="prioBtn2" disable="true" layoutX="262.0" layoutY="15.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="24.0" styleClass="priority-button">
+            <cursor>
+                <Cursor fx:constant="HAND" />
+            </cursor>
+        </Button>
+        <Button fx:id="prioBtn3" disable="true" layoutX="284.0" layoutY="15.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="24.0" styleClass="priority-button">
+            <cursor>
+                <Cursor fx:constant="HAND" />
+            </cursor>
+        </Button>
+    </children>
+    <cursor>
+        <Cursor fx:constant="DEFAULT" />
+    </cursor>
+</AnchorPane>

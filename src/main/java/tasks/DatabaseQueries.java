@@ -1,39 +1,43 @@
+package tasks;
+
 import java.sql.*;
+import java.util.ArrayList;
 
 public class DatabaseQueries {
 
-    private static String insertQuery (String id, int priority) {
+    private static String insertQuery (String id, int priority, String time) {
         return """
-                        INSERT INTO "TasksDb" (id, priority)
-                        VALUES ('%s' , '%o')
+                        INSERT INTO "TasksDb" (id, priority, time)
+                        VALUES ('%s' , '%o', '%s')
                         ON CONFLICT DO NOTHING;
-                        """.formatted(id, priority);
+                        """.formatted(id, priority, time);
     }
 
-    private static String updateQuery (String id, int priority) {
+    private static String updateQuery (String id, int priority, String time) {
         return """
-                        UPDATE "TasksDb" SET priority = %o
+                        UPDATE "TasksDb"
+                        SET priority = '%o', time = '%s'
                         WHERE id = '%s';
-                        """.formatted(priority, id);
+                        """.formatted(priority, time, id);
     }
 
     private static String selectQuery () {
         return """
-                        SELECT id, priority FROM "TasksDb"
+                        SELECT id, priority, time FROM "TasksDb"
                         """;
     }
 
-    public static void changePriority(String taskId, int priority) throws SQLException {
+    public static void changeDb(String taskId, int priority, String time) throws SQLException {
 
         // Database connection
         Connection connection = makeConnection();
 
         Statement statement = connection.createStatement();
 
-        statement.executeUpdate((DatabaseQueries.updateQuery(taskId, priority)));
+        statement.executeUpdate((DatabaseQueries.updateQuery(taskId, priority, time)));
     }
 
-    public static void loadPriorities () throws SQLException {
+    public static void loadValues (ArrayList<TaskCreator> tasksInThisList) throws SQLException {
 
         Connection connection = makeConnection();
 
@@ -43,27 +47,34 @@ public class DatabaseQueries {
 
             String id = rs.getString("id");
             int priority = rs.getInt("priority");
+            String time = rs.getString("time");
 
-            boolean isPresent = TasksMain.tasksToShow.stream()
+            boolean isPresent = tasksInThisList.stream()
                     .anyMatch(task -> task.getId().equals(id));
 
             if (isPresent) {
-                TasksMain.tasksToShow.stream()
+                tasksInThisList.stream()
                         .filter(task -> task.getId().equals(id))
                         .findFirst()
                         .get()
                         .setPriority(priority);
+
+                tasksInThisList.stream()
+                        .filter(task -> task.getId().equals(id))
+                        .findFirst()
+                        .get()
+                        .setTime(time);
             }
         }
     }
 
-    public static void insertTask(String taskId, int priority) throws SQLException {
+    public static void insertTask(String taskId, int priority, String time) throws SQLException {
 
         Connection connection = makeConnection();
 
         Statement statement = connection.createStatement();
 
-        statement.executeUpdate(insertQuery(taskId, priority));
+        statement.executeUpdate(insertQuery(taskId, priority, time));
     }
 
     private static Connection makeConnection() {

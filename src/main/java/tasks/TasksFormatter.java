@@ -1,3 +1,5 @@
+package tasks;
+
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
@@ -11,23 +13,20 @@ import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.tasks.Tasks;
 import com.google.api.services.tasks.TasksScopes;
 import com.google.api.services.tasks.model.Task;
+import com.google.api.services.tasks.model.TaskList;
 
-import javafx.application.Application;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
-import javafx.fxml.FXMLLoader;
-
+import javax.swing.text.DateFormatter;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import java.sql.*;
+public class TasksFormatter {
 
-public class TasksMain extends Application{
     private static final String APPLICATION_NAME = "Google Tasks API Java Quickstart";
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
     private static final String TOKENS_DIRECTORY_PATH = "tokens";
@@ -36,6 +35,7 @@ public class TasksMain extends Application{
      * Global instance of the scopes required by this quickstart.
      * If modifying these scopes, delete your previously saved tokens/ folder.
      */
+
     private static final List<String> SCOPES = Collections.singletonList(TasksScopes.TASKS);
     private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
 
@@ -45,6 +45,7 @@ public class TasksMain extends Application{
      * @return An authorized Credential object.
      * @throws IOException If the credentials.json file cannot be found.
      */
+
     private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
         // Load client secrets.
         InputStream in = TasksMain.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
@@ -63,82 +64,57 @@ public class TasksMain extends Application{
         return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
     }
 
-    public static final ArrayList<TaskCreator> tasksToShow = new ArrayList<>();
+    public static Tasks getService() throws IOException, GeneralSecurityException{
 
-    public static void main(String... args) throws IOException, GeneralSecurityException, SQLException {
         // Build a new authorized API client service.
-        final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-        PrintStream out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
-        Tasks service = new Tasks.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
+        final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
+
+        return new Tasks.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
                 .setApplicationName(APPLICATION_NAME)
                 .build();
+    }
 
-        /* Creating task
+    public static void newEmptyTask(TasksList tasksList) throws GeneralSecurityException, IOException {
+
         Task task = new Task();
-        task.setTitle("NOWY TASK");
-        task.setDue("2022-04-12T23:20:50.52Z");
 
-        Tasks.TasksOperations.Insert newOne = service.tasks().insert("@default", task);
-        newOne.execute();*/
+        Tasks.TasksOperations.Insert newOne = getService().tasks().insert(tasksList.getId(), task);
+        newOne.execute();
+    }
 
+    public static void updateTitle(String taskListId, String taskId, String title) throws GeneralSecurityException, IOException {
 
-        /*TaskLists result = service.tasklists().list()
-                .setMaxResults(10)
-                .execute();
-        List<TaskList> taskLists = result.getItems();*/
+        Task taskToUpdate = getNativeTaskById(taskId, getTasksFromList(taskListId));
 
-        List<Task> tasks = service.tasks()
-                .list("@default")   //here goes TaskId
+        taskToUpdate.setTitle(title);
+
+        Tasks.TasksOperations.Update titleUpdate = getService().tasks().update(taskListId, taskId, taskToUpdate);
+        titleUpdate.execute();
+    }
+
+    public static TaskCreator getTaskById(String id, ArrayList<TaskCreator> taskList) {
+        return taskList.stream()
+                .filter(taskCreator -> taskCreator.getId().equals(id))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public static Task getNativeTaskById(String id, List<Task> taskList) {
+        return taskList.stream()
+                .filter(taskCreator -> taskCreator.getId().equals(id))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private static List<Task> getTasksFromList(String listId) throws GeneralSecurityException, IOException {
+
+        return getService().tasks()
+                .list(listId)   //here goes TaskId
                 .setShowCompleted(true)
                 .setShowHidden(true)
                 .setFields("items(id,title,notes,status,due,parent,position)")
                 .execute()
                 .getItems();
-
-        if (tasks == null || tasks.isEmpty()) {
-            System.out.println("No tasks");
-        } else {
-            for (Task tasksInList : tasks) {
-
-                TaskCreator taskCreator = new TaskCreator(tasksInList.getId(), tasksInList.getTitle(),
-                        TaskCreator.timeFormat(tasksInList.getDue()), tasksInList.getNotes(), tasksInList.getCompleted(),
-                        tasksInList.getParent());
-
-                tasksToShow.add(taskCreator);
-
-                // insert query execution
-               DatabaseQueries.insertTask(taskCreator.getId(), taskCreator.getPriority());
-            }
-            DatabaseQueries.loadPriorities();
-        }
-        /*//change 4 tasks' priority
-        tasksToShow.stream()
-                .limit(4)
-                .forEach(taskCreator -> taskCreator.setPriority(2));
-        //set priority in db
-        for (TaskCreator taskCreator : tasksToShow) {
-            System.out.println(taskCreator.getPriority());
-            System.out.println(taskCreator.getId());
-            statement.executeUpdate((DatabaseQueries.updateQuery(taskCreator.getId(), taskCreator.getPriority())));
-        }*/
-
-        for (TaskCreator task : tasksToShow) {
-            if (task.getLocalDateTime() != null) {
-                out.print(task.getTitle() + " - ");
-                System.out.println(TaskCreator.remainingTime(task.getLocalDateTime()));
-            }
-        }
-        launch(args);
-    }
-
-    @Override
-    public void start(Stage stage) throws IOException {
-
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/SceneBuilderTest.fxml"));
-        Parent root =  loader.load();
-        stage.setTitle("Testing one two");
-        stage.setScene(new Scene(root));
-        stage.show();
     }
 }

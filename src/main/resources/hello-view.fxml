@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Line?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="499.0" prefWidth="860.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.HelloController">
+    <children>
+        <VBox prefHeight="496.0" prefWidth="254.0" styleClass="vbox" stylesheets="@style.css" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <Pane prefHeight="186.0" prefWidth="254.0">
+                    <children>
+                        <Label alignment="CENTER" prefHeight="186.0" prefWidth="254.0" styleClass="titleLabel" text="Tasks 4U" />
+                        <Line endX="100.0" layoutX="127.0" layoutY="168.0" startX="-100.0" stroke="WHITE" strokeWidth="4.0" />
+                    </children>
+                </Pane>
+                <Button fx:id="currTBtn" mnemonicParsing="false" prefHeight="64.0" prefWidth="271.0" styleClass="menuButton" stylesheets="@style.css" text="Current tasks">
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor></Button>
+                <Button fx:id="compTBtn" mnemonicParsing="false" prefHeight="64.0" prefWidth="271.0" styleClass="menuButton" stylesheets="@style.css" text="Completed">
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor></Button>
+                <Pane prefHeight="200.0" prefWidth="254.0">
+                    <children>
+                        <Button fx:id="addTListBtn" layoutX="37.0" layoutY="78.0" mnemonicParsing="false" styleClass="addButton" text="Add new TaskList">
+                            <graphic>
+                                <FontAwesomeIcon fill="#0d66d9" glyphName="PLUS" />
+                            </graphic>
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor>
+                        </Button>
+                        <Line endX="100.0" layoutX="127.0" layoutY="14.0" startX="-100.0" stroke="WHITE" strokeWidth="4.0" />
+                    </children>
+                </Pane>
+            </children>
+        </VBox>
+        <StackPane fx:id="stackPane" layoutX="254.0" minWidth="571.0" prefHeight="499.0" prefWidth="571.0" AnchorPane.bottomAnchor="-0.19999999999998863" AnchorPane.leftAnchor="254.0" AnchorPane.rightAnchor="-0.20000000000004547" AnchorPane.topAnchor="0.0">
+            <children>
+                <AnchorPane fx:id="completedTasksPn" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #ffffff;">
+                    <children>
+                        <Pane prefHeight="67.0" prefWidth="606.0" style="-fx-background-color: #6ab8f5;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                            <children>
+                                <Label layoutX="27.0" layoutY="19.0" styleClass="taskListLabel" text="Completed tasks" />
+                            </children>
+                        </Pane>
+                        <AnchorPane layoutY="67.0" prefHeight="434.0" prefWidth="571.0" style="-fx-background-color: #ffffff;" AnchorPane.bottomAnchor="0.20000000000004547" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="64.59999999999997">
+                            <children>
+                                <ScrollPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <content>
+                                        <GridPane fx:id="completedGridPane" prefHeight="432.0" prefWidth="568.0">
+                                            <columnConstraints>
+                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                            </columnConstraints>
+                                        </GridPane>
+                                    </content>
+                                </ScrollPane>
+                            </children>
+                        </AnchorPane>
+                    </children>
+                </AnchorPane>
+                <AnchorPane fx:id="currentTasksPn" prefHeight="496.0" prefWidth="538.0" style="-fx-background-color: #ffffff;">
+                    <children>
+                        <Pane prefHeight="67.0" prefWidth="538.0" styleClass="topPane" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                            <children>
+                                <ComboBox id="comboBoxTop" fx:id="comboBoxTop" layoutX="119.0" layoutY="21.0" onAction="#getTaskList" prefWidth="150.0" style="-fx-background-color: #FFF;">
+                                    <cursor>
+                                        <Cursor fx:constant="HAND" />
+                                    </cursor>
+                                </ComboBox>
+                                <Label layoutX="23.0" layoutY="19.0" styleClass="taskListLabel" text="TaskLists:" />
+                            </children>
+                        </Pane>
+                        <ScrollPane fx:id="scrollPane" centerShape="false" layoutY="67.0" prefHeight="367.0" prefWidth="571.0" snapToPixel="false" AnchorPane.bottomAnchor="65.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="67.0">
+                            <content>
+                                <GridPane fx:id="grid" prefHeight="125.0" prefWidth="564.0" styleClass="grid">
+                                    <columnConstraints>
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="178.4000244140625" minWidth="10.0" prefWidth="132.800048828125" />
+                                    </columnConstraints>
+                                </GridPane>
+                            </content>
+                        </ScrollPane>
+                        <Button fx:id="addTaskBtn" alignment="CENTER" layoutX="266.0" layoutY="448.0" mnemonicParsing="false" styleClass="addButton" AnchorPane.bottomAnchor="14.200000000000003" AnchorPane.leftAnchor="266.0" AnchorPane.rightAnchor="267.0">
+                            <graphic>
+                                <FontAwesomeIcon fill="#0d66d9" glyphName="PLUS" />
+                            </graphic>
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor>
+                        </Button>
+                    </children>
+                </AnchorPane>
+            </children>
+        </StackPane>
+    </children>
+</AnchorPane>

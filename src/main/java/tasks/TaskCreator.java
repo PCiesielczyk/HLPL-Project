@@ -1,9 +1,13 @@
+package tasks;
+
 import com.google.api.client.util.DateTime;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class TaskCreator {
 
@@ -11,25 +15,35 @@ public class TaskCreator {
     private String id;
     private String title;
     private LocalDateTime localDateTime;
+    private String time;
     private String details;
     private String complete;
     private String parent;
     private int priority;
+    private List<String> subTasks;
+    private List<String> completedSubTasks;
 
-    public TaskCreator(String id, String title, LocalDateTime localDateTime, String details,
-                       String complete, String parent, int priority) {
+    public TaskCreator(String id, String title, LocalDateTime localDateTime, String time,
+                       String details, String complete, String parent, int priority) {
         this.id = id;
         this.title = title;
         this.localDateTime = localDateTime;
+        this.time = time;
         this.details = details;
         this.complete = complete;
         this.parent = parent;
         this.priority = priority;
+        this.subTasks = new ArrayList<>();
+        this.completedSubTasks = new ArrayList<>();
     }
 
-    public TaskCreator(String id, String title, LocalDateTime localDateTime, String details,
-                       String complete, String parent) {
-        this(id, title, localDateTime, details, complete, parent, PRIORITY);
+    public TaskCreator(String id, String title, LocalDateTime localDateTime, String time,
+                       String details, String complete, String parent) {
+        this(id, title, localDateTime, time, details, complete, parent, PRIORITY);
+    }
+
+    public TaskCreator() {
+        this("", "", null, "", "", "", "", PRIORITY);
     }
 
     public String getId() {
@@ -54,6 +68,14 @@ public class TaskCreator {
 
     public void setLocalDateTime(LocalDateTime localDateTime) {
         this.localDateTime = localDateTime;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 
     public String getDetails() {
@@ -88,12 +110,24 @@ public class TaskCreator {
         this.priority = priority;
     }
 
+    public List<String> getSubTasks() {
+        return subTasks;
+    }
+
+    public void setSubTasks(List<String> subTasks) {
+        this.subTasks = subTasks;
+    }
+
+    public List<String> getCompletedSubTasks() {
+        return completedSubTasks;
+    }
+
+    public void setCompletedSubTasks(List<String> completedSubTasks) {
+        this.completedSubTasks = completedSubTasks;
+    }
+
     public String toString() {
-        if (getParent() == null) {
-            return getTitle() + " | " + getPriority() + " | " + remainingTime(getLocalDateTime());
-        } else {
-            return getTitle();
-        }
+        return getTitle();
     }
 
     public static LocalDateTime timeFormat(String dateString) {
@@ -108,7 +142,30 @@ public class TaskCreator {
 
     public static String timeShow (LocalDateTime localDateTime) {
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        if (localDateTime != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            return localDateTime.format(formatter);
+        } else {
+            return null;
+        }
+    }
+
+    public static String hourShow (LocalDateTime localDateTime) {
+
+        if (localDateTime != null) {
+            if (localDateTime.getMinute() < 10) {
+                return localDateTime.getHour() + ":0" + localDateTime.getMinute();
+            } else {
+                return localDateTime.getHour() + ":" + localDateTime.getMinute();
+            }
+        } else {
+            return null;
+        }
+    }
+
+    public static String dateShow (LocalDateTime localDateTime) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
         return localDateTime.format(formatter);
     }
 
