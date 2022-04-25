@@ -10,9 +10,14 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 
 import tasks.DatabaseQueries;
+import tasks.SubTaskCreator;
 import tasks.TaskCreator;
 import tasks.TasksFormatter;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Optional;
 
 public class TaskDesController {
@@ -32,7 +37,7 @@ public class TaskDesController {
     @FXML
     private Button addSubTaskBtn;
 
-    public void setData(TaskCreator task, GridPane grid){
+    public void setData(TaskCreator task, GridPane grid) {
         this.task = task;
         this.grid = grid;
         textArea.setText(task.getDetails());
@@ -50,9 +55,15 @@ public class TaskDesController {
 
     private void updateDescription(KeyEvent keyEvent) {
         task.setDetails(textArea.getText());
+
+        try {
+            TasksFormatter.updateDetails(task.getId(), textArea.getText());
+        } catch (GeneralSecurityException | IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void pickDateHour(ActionEvent action){
+    public void pickDateHour(ActionEvent action) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
             fxmlLoader.setLocation(getClass().getResource("../dateHour.fxml"));
@@ -65,24 +76,32 @@ public class TaskDesController {
             dialog.setDialogPane(dialogPane);
 
             Optional<ButtonType> clickedButton = dialog.showAndWait();
-            if (clickedButton.get() == ButtonType.APPLY){
+            if (clickedButton.get() == ButtonType.APPLY) {
                 dateHourController.update();
                 if (task.getLocalDateTime() != null) {
                     timeBtn.setText(task.getTime());
                     dateBtn.setText(TaskCreator.dateShow(task.getLocalDateTime()));
+
+                    TasksFormatter.updateDate(task.getId(), dateBtn.getText());
+
                     DatabaseQueries.changeDb(task.getId(), task.getPriority(), task.getTime());
                 }
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
-    private void createSubTask(ActionEvent action){
+    private void createSubTask(ActionEvent action) {
         try {
-            String subTask = "";
+
+            TasksFormatter.newEmptySubTask(task.getId());
+
+            SubTaskCreator subTask = new SubTaskCreator();
+            subTask.setId(TasksFormatter.getLatestId(TasksFormatter.getListIdByTaskId(task.getId())));
+
             task.getSubTasks().add(subTask);
+
             FXMLLoader fxmlLoader = new FXMLLoader();
             fxmlLoader.setLocation(getClass().getResource("../subTask.fxml"));
             AnchorPane anchorPane = fxmlLoader.load();
@@ -92,7 +111,8 @@ public class TaskDesController {
 
             grid.add(anchorPane, 0, grid.getRowCount());
             grid.setMargin(anchorPane, new Insets(0, 0, 4, 20));
-        }catch(Exception e){
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

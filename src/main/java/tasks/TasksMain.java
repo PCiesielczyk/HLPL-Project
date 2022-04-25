@@ -72,8 +72,10 @@ public class TasksMain extends Application{
                     TaskCreator parent = TasksFormatter.getTaskById(childrenTasks.getParent(), tasksInThisList);
 
                     if (parent != null) {
-                        List<String> subTasks = parent.getSubTasks();
-                        subTasks.add(childrenTasks.getTitle());
+                        List<SubTaskCreator> subTasks = parent.getSubTasks();
+                        SubTaskCreator subTask = new SubTaskCreator(childrenTasks.getId(),
+                                childrenTasks.getTitle(), childrenTasks.getParent());
+                        subTasks.add(subTask);
                         parent.setSubTasks(subTasks);
                     }
                 }

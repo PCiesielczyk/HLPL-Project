@@ -13,7 +13,12 @@ import javafx.scene.layout.GridPane;
 import javafx.util.Duration;
 
 import tasks.DatabaseQueries;
+import tasks.SubTaskCreator;
 import tasks.TaskCreator;
+import tasks.TasksFormatter;
+
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 
 public class SubTaskController {
 
@@ -23,22 +28,26 @@ public class SubTaskController {
     @FXML
     private TextField textField;
 
-    private String subTask;
+    private SubTaskCreator subTask;
     private TaskCreator task;
     private GridPane grid;
 
-    public void setData(String subTask, TaskCreator task, GridPane grid){
+    public void setData(SubTaskCreator subTask, TaskCreator task, GridPane grid){
         this.subTask = subTask;
         this.task = task;
         this.grid = grid;
-        textField.setText(subTask);
+        textField.setText(subTask.getTitle());
         textField.setOnKeyReleased(this::updateTitle);
     }
 
     private void updateTitle(KeyEvent key){
 
-        subTask = textField.getText();
-
+        subTask.setTitle(textField.getText());
+        try {
+            TasksFormatter.updateSubTask(subTask.getId(), textField.getText());
+        } catch (GeneralSecurityException | IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void deleteSubTask(){

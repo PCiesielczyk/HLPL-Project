@@ -20,8 +20,8 @@ public class TaskCreator {
     private String complete;
     private String parent;
     private int priority;
-    private List<String> subTasks;
-    private List<String> completedSubTasks;
+    private List<SubTaskCreator> subTasks;
+    private List<SubTaskCreator> completedSubTasks;
 
     public TaskCreator(String id, String title, LocalDateTime localDateTime, String time,
                        String details, String complete, String parent, int priority) {
@@ -110,19 +110,19 @@ public class TaskCreator {
         this.priority = priority;
     }
 
-    public List<String> getSubTasks() {
+    public List<SubTaskCreator> getSubTasks() {
         return subTasks;
     }
 
-    public void setSubTasks(List<String> subTasks) {
+    public void setSubTasks(List<SubTaskCreator> subTasks) {
         this.subTasks = subTasks;
     }
 
-    public List<String> getCompletedSubTasks() {
+    public List<SubTaskCreator> getCompletedSubTasks() {
         return completedSubTasks;
     }
 
-    public void setCompletedSubTasks(List<String> completedSubTasks) {
+    public void setCompletedSubTasks(List<SubTaskCreator> completedSubTasks) {
         this.completedSubTasks = completedSubTasks;
     }
 

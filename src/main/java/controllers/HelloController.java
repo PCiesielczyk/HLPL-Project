@@ -124,6 +124,8 @@ public class HelloController implements Initializable {
                 TaskCreator task = new TaskCreator();
                 TasksFormatter.newEmptyTask(comboBoxTop.getSelectionModel().getSelectedItem());
 
+                task.setId(TasksFormatter.getLatestId(comboBoxTop.getSelectionModel().getSelectedItem().getId()));
+
                 comboBoxTop.getSelectionModel().getSelectedItem().getTasks().add(0, task);
                 if (grid.getChildren().size() > 0) {
                     grid.getChildren().remove(0, grid.getChildren().size());
