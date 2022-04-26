@@ -88,6 +88,15 @@ public class TasksFormatter {
         DatabaseQueries.insertTask(newTask.getId(), 1, "");
     }
 
+    public static void newEmptyTaskList(String taskListName) throws GeneralSecurityException, IOException {
+
+        TaskList taskList = new TaskList();
+        taskList.setTitle(taskListName);
+
+        Tasks.Tasklists.Insert newOne = getService().tasklists().insert(taskList);
+        newOne.execute();
+    }
+
     public static void updateTitle(String taskListId, String taskId, String title) throws GeneralSecurityException, IOException {
 
         Task taskToUpdate = getNativeTaskById(taskId, taskListId);
@@ -107,6 +116,18 @@ public class TasksFormatter {
 
         Tasks.TasksOperations.Update detailsUpdate = getService().tasks().update(taskListId, taskId, taskToUpdate);
         detailsUpdate.execute();
+    }
+
+    public static void completeTask(String taskId) throws GeneralSecurityException, IOException {
+
+        String taskListId = getListIdByTaskId(taskId);
+        Task taskToUpdate = getNativeTaskById(taskId, taskListId);
+
+        taskToUpdate.setStatus("completed");
+
+        Tasks.TasksOperations.Update completeUpdate = getService().tasks().update(taskListId, taskId, taskToUpdate);
+        completeUpdate.execute();
+
     }
 
     public static void newEmptySubTask(String taskId) throws GeneralSecurityException, IOException {
@@ -200,31 +221,7 @@ public class TasksFormatter {
         return null;
     }
 
-    private static List<Task> getTasksFromList(String listId) throws GeneralSecurityException, IOException {
-
-        return getService().tasks()
-                .list(listId)   //here goes TaskId
-                .setShowCompleted(true)
-                .setShowHidden(true)
-                .setFields("items(id,title,notes,status,due,parent,position)")
-                .execute()
-                .getItems();
-    }
-
-    public static String getLatestId(String taskListId) throws GeneralSecurityException, IOException {
-        List<Task> tasks = getService().tasks()
-                .list(taskListId)   //here goes TaskId
-                .setShowCompleted(true)
-                .setShowHidden(true)
-                .setFields("items(id,title,notes,status,due,parent,position)")
-                .setMaxResults(1)
-                .execute()
-                .getItems();
-
-        return tasks.get(0).getId();
-    }
-
-    private static Task getLatestTask(String listId) throws GeneralSecurityException, IOException {
+    public static Task getLatestTask(String listId) throws GeneralSecurityException, IOException {
 
         List<Task> tasks = getService().tasks()
                 .list(listId)   //here goes TaskId
@@ -236,5 +233,16 @@ public class TasksFormatter {
                 .getItems();
 
         return tasks.get(0);
+    }
+
+    public static TaskList getLatestTaskList() throws GeneralSecurityException, IOException {
+
+        TaskLists result = getService().tasklists().list()
+                .setMaxResults(10)
+                .execute();
+
+        List<TaskList> taskLists = result.getItems();
+
+        return taskLists.get(taskLists.size() - 1);
     }
 }

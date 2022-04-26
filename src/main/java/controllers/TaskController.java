@@ -102,9 +102,16 @@ public class TaskController{
         fadeTransition.setOnFinished(new EventHandler<ActionEvent>(){
             @Override
             public void handle(ActionEvent actionEvent) {
+
                 completedTaskList.add(task);
                 grid.getChildren().remove(taskList.getTasks().indexOf(task));
                 taskList.getTasks().remove(task);
+
+                try {
+                    TasksFormatter.completeTask(task.getId());
+                } catch (GeneralSecurityException | IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }

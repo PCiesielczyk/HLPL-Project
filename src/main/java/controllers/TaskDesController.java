@@ -98,7 +98,7 @@ public class TaskDesController {
             TasksFormatter.newEmptySubTask(task.getId());
 
             SubTaskCreator subTask = new SubTaskCreator();
-            subTask.setId(TasksFormatter.getLatestId(TasksFormatter.getListIdByTaskId(task.getId())));
+            subTask.setId(TasksFormatter.getLatestTask(TasksFormatter.getListIdByTaskId(task.getId())).getId());
 
             task.getSubTasks().add(subTask);
 

@@ -58,9 +58,10 @@ public class TasksMain extends Application{
                         children.add(tasksInList);
 
                     } else {
+
                         TaskCreator taskCreator = new TaskCreator(tasksInList.getId(), tasksInList.getTitle(),
                                 TaskCreator.timeFormat(tasksInList.getDue()), TaskCreator.hourShow(TaskCreator.timeFormat(tasksInList.getDue())),
-                                tasksInList.getNotes(), tasksInList.getCompleted(), tasksInList.getParent());
+                                tasksInList.getNotes(), tasksInList.getStatus(), tasksInList.getParent());
 
                         tasksInThisList.add(taskCreator);
                         DatabaseQueries.insertTask(taskCreator.getId(), taskCreator.getPriority(), taskCreator.getTime());
