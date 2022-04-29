@@ -47,13 +47,18 @@ public class TaskDesController {
             dateBtn.setText(TaskCreator.dateShow(task.getLocalDateTime()));
         }
 
-        textArea.setOnKeyReleased(this::updateDescription);
+        textArea.focusedProperty().addListener((obs, oldVal, newVal) -> {
+
+            if (!newVal) {
+                this.updateDescription();
+            }
+        });
         timeBtn.setOnAction(this::pickDateHour);
         dateBtn.setOnAction(this::pickDateHour);
         addSubTaskBtn.setOnAction(this::createSubTask);
     }
 
-    private void updateDescription(KeyEvent keyEvent) {
+    private void updateDescription() {
         task.setDetails(textArea.getText());
 
         try {

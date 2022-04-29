@@ -71,17 +71,19 @@ public class TaskController{
         this.completedTaskList = completedTaskList;
         checkBoxTask.setOnAction(this::deleteTask);
 //        this.textField.setOnMouseClicked(e -> textField.selectAll());
-        this.textField.setOnKeyReleased(keyEvent -> {
-            if (keyEvent.getCode().equals(KeyCode.ENTER)){
-                this.grid.requestFocus();
-            }
-            this.task.setTitle(textField.getText());
-            try {
-                TasksFormatter.updateTitle(taskList.getId(), task.getId(), textField.getText());
-            } catch (GeneralSecurityException | IOException e) {
-                e.printStackTrace();
+
+        this.textField.focusedProperty().addListener((obs, oldVal, newVal) -> {
+
+            if (!newVal) {
+                this.task.setTitle(textField.getText());
+                try {
+                    TasksFormatter.updateTitle(taskList.getId(), task.getId(), textField.getText());
+                } catch (GeneralSecurityException | IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
+
         setPriorityBoxes();
         prioBtn1.setOnAction(this::prioBtn1Clicked);
         prioBtn2.setOnAction(this::prioBtn2Clicked);

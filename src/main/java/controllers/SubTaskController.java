@@ -1,5 +1,6 @@
 package controllers;
 
+import com.google.api.services.tasks.model.Task;
 import javafx.animation.FadeTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -37,10 +38,16 @@ public class SubTaskController {
         this.task = task;
         this.grid = grid;
         textField.setText(subTask.getTitle());
-        textField.setOnKeyReleased(this::updateTitle);
+
+        textField.focusedProperty().addListener((obs, oldVal, newVal) -> {
+
+            if (!newVal) {
+                this.updateTitle();
+            }
+        });
     }
 
-    private void updateTitle(KeyEvent key){
+    private void updateTitle(){
 
         subTask.setTitle(textField.getText());
         try {
@@ -50,19 +57,26 @@ public class SubTaskController {
         }
     }
 
-    public void deleteSubTask(){
+    public void deleteSubTask() {
         FadeTransition fadeTransition = new FadeTransition();
         fadeTransition.setDuration(Duration.millis(1000));
         fadeTransition.setNode(grid.getChildren().get(task.getSubTasks().indexOf(subTask) + 1));
         fadeTransition.setFromValue(1);
         fadeTransition.setToValue(0);
         fadeTransition.play();
+
         fadeTransition.setOnFinished(new EventHandler<ActionEvent>(){
             @Override
             public void handle(ActionEvent actionEvent) {
                 grid.getChildren().remove(task.getSubTasks().indexOf(subTask) + 1);
                 task.getCompletedSubTasks().add(subTask);
                 task.getSubTasks().remove(subTask);
+
+                try {
+                    TasksFormatter.deleteSubTask(subTask.getId());
+                } catch (GeneralSecurityException | IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
