@@ -24,8 +24,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
+import java.util.Comparator;
 import java.util.List;
+import static java.util.Comparator.*;
+
 
 public class TasksFormatter {
 
@@ -177,6 +179,24 @@ public class TasksFormatter {
 
         Tasks.TasksOperations.Update dateUpdate = getService().tasks().update(taskListId, taskId, taskToUpdate);
         dateUpdate.execute();
+    }
+
+    public static void sortByPriority(TasksList tasksList) {
+
+        List<TaskCreator> tasks = tasksList.getTasks();
+
+        tasks.sort(comparing(TaskCreator::getPriority).reversed()
+                .thenComparing(TaskCreator::getLocalDateTime, nullsLast(naturalOrder()))
+                .thenComparing(TaskCreator::getTime, nullsLast(naturalOrder())));
+    }
+
+    public static void sortByDate(TasksList tasksList) {
+
+        List<TaskCreator> tasks = tasksList.getTasks();
+
+        tasks.sort(comparing(TaskCreator::getLocalDateTime, nullsLast(naturalOrder()))
+                .thenComparing(TaskCreator::getTime, nullsLast(naturalOrder()))
+                .thenComparing(TaskCreator::getPriority, reverseOrder()));
     }
 
     public static TaskCreator getTaskById(String id, ArrayList<TaskCreator> taskList) {

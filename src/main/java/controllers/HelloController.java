@@ -86,7 +86,6 @@ public class HelloController implements Initializable {
 
                 grid.add(anchorPane, 0, i);
                 grid.setMargin(anchorPane, new Insets(4, 0, 0, 4));
-
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -131,6 +130,9 @@ public class HelloController implements Initializable {
                 if (grid.getChildren().size() > 0) {
                     grid.getChildren().remove(0, grid.getChildren().size());
                 }
+
+                //TasksFormatter.sortByPriority(comboBoxTop.getSelectionModel().getSelectedItem());
+
                 loadTaskList();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -193,5 +195,4 @@ public class HelloController implements Initializable {
             tasksList.getTasks().removeAll(completedTaskList);
         }
     }
-
 }

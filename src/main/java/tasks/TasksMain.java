@@ -60,7 +60,8 @@ public class TasksMain extends Application{
                     } else {
 
                         TaskCreator taskCreator = new TaskCreator(tasksInList.getId(), tasksInList.getTitle(),
-                                TaskCreator.timeFormat(tasksInList.getDue()), TaskCreator.hourShow(TaskCreator.timeFormat(tasksInList.getDue())),
+                                TaskCreator.timeFormat(tasksInList.getDue()),
+                                TaskCreator.hourShow(TaskCreator.timeFormat(tasksInList.getDue())),
                                 tasksInList.getNotes(), tasksInList.getStatus(), tasksInList.getParent());
 
                         tasksInThisList.add(taskCreator);

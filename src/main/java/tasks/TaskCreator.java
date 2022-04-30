@@ -3,6 +3,7 @@ package tasks;
 import com.google.api.client.util.DateTime;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -169,22 +170,44 @@ public class TaskCreator {
         return localDateTime.format(formatter);
     }
 
-    public static String remainingTime (LocalDateTime localDateTime) {
+    public static String remainingTime (LocalDateTime localDateTime, String time) {
 
+        if (localDateTime == null || time == null) {
+            return "Time not set";
+        }
+
+        int hours;
+        int minutes;
+        String[] hoursAndMinutes = time.split(":");
+
+        if (hoursAndMinutes[0].startsWith("0") && hoursAndMinutes[0].length() > 1) {
+            hours = Integer.parseInt(hoursAndMinutes[0].substring(1));
+        } else {
+            hours = Integer.parseInt(hoursAndMinutes[0]);
+        }
+
+        if (hoursAndMinutes[1].startsWith("0") && hoursAndMinutes[1].length() > 1) {
+            minutes = Integer.parseInt(hoursAndMinutes[1].substring(1));
+        } else {
+            minutes = Integer.parseInt(hoursAndMinutes[1]);
+        }
+
+        localDateTime = localDateTime.with(LocalTime.of(hours, minutes));
         LocalDateTime now = LocalDateTime.now();
 
         if (now.isAfter(localDateTime)) {
             return "Time's up";
         } else {
+
             long days = now.until(localDateTime, ChronoUnit.DAYS);
             now = now.plusDays(days);
 
-            long hours = now.until(localDateTime, ChronoUnit.HOURS);
-            now = now.plusHours(hours);
+            long hoursUntil = now.until(localDateTime, ChronoUnit.HOURS);
+            now = now.plusHours(hoursUntil);
 
-            long minutes = now.until(localDateTime, ChronoUnit.MINUTES);
+            long minutesUntil = now.until(localDateTime, ChronoUnit.MINUTES);
 
-            return String.format("Remains: %o day(s), %o hour(s) and %o minute(s)", days, hours, minutes);
+            return String.format("Remains: %s day(s), %s hour(s) and %s minute(s)", days, hoursUntil, minutesUntil);
         }
     }
 }
