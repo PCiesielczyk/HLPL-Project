@@ -20,7 +20,7 @@ import java.util.List;
 
 import java.sql.*;
 
-public class TasksMain extends Application{
+public class TasksMain extends Application {
 
     public static ArrayList<TasksList> tasksListsToShow = new ArrayList<>();
 
@@ -29,10 +29,10 @@ public class TasksMain extends Application{
 
         Tasks service = TasksFormatter.getService();
 
-        TaskLists result = service.tasklists().list()
+        List<TaskList> taskLists = service.tasklists().list()
                 .setMaxResults(10)
-                .execute();
-        List<TaskList> taskLists = result.getItems();
+                .execute()
+                .getItems();
 
         for (TaskList taskListsToGet : taskLists) {
 
@@ -41,7 +41,7 @@ public class TasksMain extends Application{
                     .list(taskListsToGet.getId())   //here goes TaskId
                     .setShowCompleted(true)
                     .setShowHidden(true)
-                    .setFields("items(id,title,notes,status,due,parent,position)")
+                    .setFields("items(id,title,notes,status,due,parent,position,deleted)")
                     .execute()
                     .getItems();
 
