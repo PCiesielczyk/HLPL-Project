@@ -3,5 +3,4 @@
 /tokens/StoredCredential
 /gradlew
 /gradlew.bat
-/gradle/
 /src/main/resources/dbconfig.properties
