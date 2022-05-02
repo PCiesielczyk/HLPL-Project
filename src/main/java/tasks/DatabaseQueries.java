@@ -2,6 +2,7 @@ package tasks;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.ResourceBundle;
 
 public class DatabaseQueries {
 
@@ -79,10 +80,17 @@ public class DatabaseQueries {
     private static Connection makeConnection() {
 
         Connection connection = null;
+        ResourceBundle reader;
+
         try {
+
+            reader = ResourceBundle.getBundle("dbconfig");
+            String url = reader.getString("db.url");
+            String username = reader.getString("db.username");
+            String password = reader.getString("db.password");
+
             connection = DriverManager
-                    .getConnection("jdbc:mysql://mysql.agh.edu.pl:3306/ciesielc",
-                            "ciesielc", "4v8uogs6YZfCxE1c");
+                    .getConnection(url, username, password);
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println(e.getClass().getName()+": "+e.getMessage());
