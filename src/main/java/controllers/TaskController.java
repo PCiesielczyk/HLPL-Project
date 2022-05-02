@@ -76,11 +76,18 @@ public class TaskController{
 
             if (!newVal) {
                 this.task.setTitle(textField.getText());
-                try {
-                    TasksFormatter.updateTitle(taskList.getId(), task.getId(), textField.getText());
-                } catch (GeneralSecurityException | IOException e) {
-                    e.printStackTrace();
-                }
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            TasksFormatter.updateTitle(taskList.getId(), task.getId(), textField.getText());
+                        } catch (GeneralSecurityException | IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
+
             }
         });
 
@@ -109,11 +116,17 @@ public class TaskController{
                 grid.getChildren().remove(taskList.getTasks().indexOf(task));
                 taskList.getTasks().remove(task);
 
-                try {
-                    TasksFormatter.completeTask(task.getId());
-                } catch (GeneralSecurityException | IOException e) {
-                    e.printStackTrace();
-                }
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            TasksFormatter.completeTask(task.getId());
+                        } catch (GeneralSecurityException | IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
+
             }
         });
     }

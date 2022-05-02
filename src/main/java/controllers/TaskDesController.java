@@ -61,11 +61,17 @@ public class TaskDesController {
     private void updateDescription() {
         task.setDetails(textArea.getText());
 
-        try {
-            TasksFormatter.updateDetails(task.getId(), textArea.getText());
-        } catch (GeneralSecurityException | IOException e) {
-            e.printStackTrace();
-        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    TasksFormatter.updateDetails(task.getId(), textArea.getText());
+                } catch (GeneralSecurityException | IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
     }
 
     public void pickDateHour(ActionEvent action) {
@@ -87,9 +93,22 @@ public class TaskDesController {
                     timeBtn.setText(task.getTime());
                     dateBtn.setText(TaskCreator.dateShow(task.getLocalDateTime()));
 
-                    TasksFormatter.updateDate(task.getId(), dateBtn.getText());
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                TasksFormatter.updateDate(task.getId(), dateBtn.getText());
 
-                    DatabaseQueries.changeDb(task.getId(), task.getPriority(), task.getTime());
+                                DatabaseQueries.changeDb(task.getId(), task.getPriority(), task.getTime());
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }).start();
+
+//                    TasksFormatter.updateDate(task.getId(), dateBtn.getText());
+//
+//                    DatabaseQueries.changeDb(task.getId(), task.getPriority(), task.getTime());
                 }
             }
         } catch (Exception e) {
@@ -99,11 +118,20 @@ public class TaskDesController {
 
     private void createSubTask(ActionEvent action) {
         try {
-
-            TasksFormatter.newEmptySubTask(task.getId());
-
             SubTaskCreator subTask = new SubTaskCreator();
-            subTask.setId(TasksFormatter.getLatestTask(TasksFormatter.getListIdByTaskId(task.getId())).getId());
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try{
+                        TasksFormatter.newEmptySubTask(task.getId());
+
+                        subTask.setId(TasksFormatter.getLatestTask(TasksFormatter.getListIdByTaskId(task.getId())).getId());
+                    }catch(Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
 
             task.getSubTasks().add(subTask);
 

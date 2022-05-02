@@ -51,7 +51,7 @@ public class TaskCreator {
         return id;
     }
 
-    public void setId(String id) {
+    public synchronized void setId(String id) {
         this.id = id;
     }
 

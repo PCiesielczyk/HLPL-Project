@@ -1,5 +1,6 @@
 package tasks;
 
+import javax.xml.crypto.dsig.spec.ExcC14NParameterSpec;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -28,13 +29,23 @@ public class DatabaseQueries {
     }
 
     public static void changeDb(String taskId, int priority, String time) throws SQLException {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Connection connection = makeConnection();
 
+                    Statement statement = connection.createStatement();
+
+                    statement.executeUpdate((DatabaseQueries.updateQuery(taskId, priority, time)));
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
+        };
+        Thread thread = new Thread(runnable);
+        thread.start();
         // Database connection
-        Connection connection = makeConnection();
-
-        Statement statement = connection.createStatement();
-
-        statement.executeUpdate((DatabaseQueries.updateQuery(taskId, priority, time)));
     }
 
     public static void loadValues (ArrayList<TaskCreator> tasksInThisList) throws SQLException {

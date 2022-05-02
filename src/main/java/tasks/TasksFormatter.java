@@ -63,15 +63,15 @@ public class TasksFormatter {
                 .build();
     }
 
-    public static void newEmptyTask(TasksList tasksList) throws GeneralSecurityException, IOException, SQLException {
+    public static synchronized void newEmptyTask(TasksList tasksList) throws GeneralSecurityException, IOException, SQLException {
 
-        Task task = new Task();
+                    Task task = new Task();
 
-        Tasks.TasksOperations.Insert newOne = getService().tasks().insert(tasksList.getId(), task);
-        newOne.execute();
+                    Tasks.TasksOperations.Insert newOne = getService().tasks().insert(tasksList.getId(), task);
+                    newOne.execute();
 
-        Task newTask = getLatestTask(tasksList.getId());
-        DatabaseQueries.insertTask(newTask.getId(), 1, "");
+                    Task newTask = getLatestTask(tasksList.getId());
+                    DatabaseQueries.insertTask(newTask.getId(), 1, "");
     }
 
     public static void newEmptyTaskList(String taskListName) throws GeneralSecurityException, IOException {
@@ -83,7 +83,7 @@ public class TasksFormatter {
         newOne.execute();
     }
 
-    public static void deleteSubTask(String subTaskId) throws GeneralSecurityException, IOException {
+    public static synchronized void deleteSubTask(String subTaskId) throws GeneralSecurityException, IOException {
 
         String taskListId = getListIdByTaskId(subTaskId);
 
@@ -91,7 +91,7 @@ public class TasksFormatter {
         deleteSub.execute();
     }
 
-    public static void updateTitle(String taskListId, String taskId, String title) throws GeneralSecurityException, IOException {
+    public static synchronized void updateTitle(String taskListId, String taskId, String title) throws GeneralSecurityException, IOException {
 
         Task taskToUpdate = getNativeTaskById(taskId, taskListId);
 
@@ -101,7 +101,7 @@ public class TasksFormatter {
         titleUpdate.execute();
     }
 
-    public static void updateDetails(String taskId, String details) throws GeneralSecurityException, IOException {
+    public static synchronized void updateDetails(String taskId, String details) throws GeneralSecurityException, IOException {
 
         String taskListId = getListIdByTaskId(taskId);
         Task taskToUpdate = getNativeTaskById(taskId, taskListId);
@@ -112,7 +112,7 @@ public class TasksFormatter {
         detailsUpdate.execute();
     }
 
-    public static void completeTask(String taskId) throws GeneralSecurityException, IOException {
+    public static synchronized void completeTask(String taskId) throws GeneralSecurityException, IOException {
 
         String taskListId = getListIdByTaskId(taskId);
         Task taskToUpdate = getNativeTaskById(taskId, taskListId);
@@ -124,7 +124,7 @@ public class TasksFormatter {
 
     }
 
-    public static void newEmptySubTask(String taskId) throws GeneralSecurityException, IOException {
+    public static synchronized void newEmptySubTask(String taskId) throws GeneralSecurityException, IOException {
 
         String taskListId = getListIdByTaskId(taskId);
         Task task = new Task();
@@ -137,6 +137,7 @@ public class TasksFormatter {
         Tasks.TasksOperations.Move move = getService().tasks().move(taskListId, latestTask.getId());
         move.setParent(taskId);
         move.execute();
+
     }
 
     public static void updateSubTask(String subTaskId, String title) throws GeneralSecurityException, IOException {

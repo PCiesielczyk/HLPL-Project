@@ -50,11 +50,18 @@ public class SubTaskController {
     private void updateTitle(){
 
         subTask.setTitle(textField.getText());
-        try {
-            TasksFormatter.updateSubTask(subTask.getId(), textField.getText());
-        } catch (GeneralSecurityException | IOException e) {
-            e.printStackTrace();
-        }
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    TasksFormatter.updateSubTask(subTask.getId(), textField.getText());
+                } catch (GeneralSecurityException | IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
     }
 
     public void deleteSubTask() {
@@ -72,11 +79,17 @@ public class SubTaskController {
                 task.getCompletedSubTasks().add(subTask);
                 task.getSubTasks().remove(subTask);
 
-                try {
-                    TasksFormatter.deleteSubTask(subTask.getId());
-                } catch (GeneralSecurityException | IOException e) {
-                    e.printStackTrace();
-                }
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            TasksFormatter.deleteSubTask(subTask.getId());
+                        } catch (GeneralSecurityException | IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
+
             }
         });
     }
