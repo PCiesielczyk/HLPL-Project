@@ -7,23 +7,22 @@ public class DatabaseQueries {
 
     private static String insertQuery (String id, int priority, String time) {
         return """
-                        INSERT INTO "TasksDb" (id, priority, time)
-                        VALUES ('%s' , '%o', '%s')
-                        ON CONFLICT DO NOTHING;
+                        INSERT IGNORE INTO TasksDb (id, priority, time)
+                        VALUES ('%s' , %o, '%s');
                         """.formatted(id, priority, time);
     }
 
     private static String updateQuery (String id, int priority, String time) {
         return """
-                        UPDATE "TasksDb"
-                        SET priority = '%o', time = '%s'
+                        UPDATE TasksDb
+                        SET priority = %o, time = '%s'
                         WHERE id = '%s';
                         """.formatted(priority, time, id);
     }
 
     private static String selectQuery () {
         return """
-                        SELECT id, priority, time FROM "TasksDb"
+                        SELECT id, priority, time FROM TasksDb
                         """;
     }
 
@@ -82,8 +81,8 @@ public class DatabaseQueries {
         Connection connection = null;
         try {
             connection = DriverManager
-                    .getConnection("jdbc:postgresql://localhost:5432/postgres",
-                            "postgres", "postgres");
+                    .getConnection("jdbc:mysql://mysql.agh.edu.pl:3306/ciesielc",
+                            "ciesielc", "4v8uogs6YZfCxE1c");
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println(e.getClass().getName()+": "+e.getMessage());
