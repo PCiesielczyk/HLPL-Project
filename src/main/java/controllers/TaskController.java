@@ -15,6 +15,8 @@ import javafx.util.Duration;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.sql.SQLException;
+import java.sql.Time;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import tasks.DatabaseQueries;
@@ -48,6 +50,9 @@ public class TaskController{
     @FXML
     private Button extendBtn;
 
+    @FXML
+    private Label timeTxt;
+
 
     private TaskCreator task;
     private GridPane grid;
@@ -69,8 +74,11 @@ public class TaskController{
         this.comboBox = comboBox;
         this.taskList = taskList;
         this.completedTaskList = completedTaskList;
+        setTimeTxt();
         checkBoxTask.setOnAction(this::deleteTask);
 //        this.textField.setOnMouseClicked(e -> textField.selectAll());
+
+
 
         this.textField.focusedProperty().addListener((obs, oldVal, newVal) -> {
 
@@ -129,6 +137,20 @@ public class TaskController{
 
             }
         });
+    }
+
+    private void setTimeTxt(){
+        String txt = TaskCreator.remainingTime(task.getLocalDateTime(), task.getTime());
+        timeTxt.setText(txt);
+        if (txt.equals("Time's up")){
+            timeTxt.setStyle("-fx-text-fill: #ff0000");
+        }
+        else if (txt.length()>14){
+            timeTxt.setStyle("-fx-text-fill: #bb4304");
+        }
+        else {
+            timeTxt.setStyle("-fx-text-fill: #000000");
+        }
     }
 
     private void setPriorityBoxes(){
@@ -192,7 +214,7 @@ public class TaskController{
                 fxmlLoader2.setLocation(getClass().getResource("../taskDes.fxml"));
                 AnchorPane anchorPane2 = fxmlLoader2.load();
                 TaskDesController taskDesController = fxmlLoader2.getController();
-                taskDesController.setData(task, gridSubTask);
+                taskDesController.setData(task, gridSubTask, timeTxt);
                 gridSubTask.add(anchorPane2, 0, 0);
                 for (int i=1;i<=task.getSubTasks().size();i++){
                     FXMLLoader fxmlLoader = new FXMLLoader();

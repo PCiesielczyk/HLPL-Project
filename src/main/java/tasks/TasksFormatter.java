@@ -91,6 +91,12 @@ public class TasksFormatter {
         deleteSub.execute();
     }
 
+    public static void deleteTaskList(String taskListId) throws GeneralSecurityException, IOException {
+
+        Tasks.Tasklists.Delete delete = getService().tasklists().delete(taskListId);
+        delete.execute();
+    }
+
     public static synchronized void updateTitle(String taskListId, String taskId, String title) throws GeneralSecurityException, IOException {
 
         Task taskToUpdate = getNativeTaskById(taskId, taskListId);

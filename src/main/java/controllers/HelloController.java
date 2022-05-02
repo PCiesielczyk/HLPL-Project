@@ -10,7 +10,9 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 
+import java.io.IOException;
 import java.net.URL;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +22,8 @@ import tasks.TaskCreator;
 import tasks.TasksFormatter;
 import tasks.TasksList;
 import tasks.TasksMain;
+
+import javax.swing.*;
 
 public class HelloController implements Initializable {
 
@@ -56,6 +60,15 @@ public class HelloController implements Initializable {
     @FXML
     private StackPane stackPane;
 
+    @FXML
+    private Button sortDateBtn;
+
+    @FXML
+    private Button sortPrioBtn;
+
+    @FXML
+    private Button deleteTaskListBtn;
+
     List<TasksList> taskLists;
     List<TaskCreator> completedTaskList;
 
@@ -66,11 +79,18 @@ public class HelloController implements Initializable {
         iterate();
         taskLists.addAll(TasksMain.tasksListsToShow);
         comboBoxTop.getItems().addAll(taskLists);
+        if (comboBoxTop.getItems().size()>0){
+            comboBoxTop.getSelectionModel().select(0);
+            loadTaskList();
+        }
         comboBoxTop.setOnAction(this::getTaskList);
         addTaskBtn.setOnAction(this::createNewTask);
         addTListBtn.setOnAction(this::createTaskList);
         currTBtn.setOnAction(this::switchToCurrent);
         compTBtn.setOnAction(this::switchToCompleted);
+        sortDateBtn.setOnAction(this::sortTasksByDate);
+        sortPrioBtn.setOnAction(this::sortTasksByPrio);
+        deleteTaskListBtn.setOnAction(this::deleteTaskList);
     }
 
     private void loadTaskList() {
@@ -187,6 +207,35 @@ public class HelloController implements Initializable {
         if (completedGridPane.getChildren().size() > 0)
             completedGridPane.getChildren().remove(0, completedGridPane.getChildren().size());
         loadCompletedTaskList();
+    }
+
+    private void sortTasksByDate(ActionEvent action){
+        if (!comboBoxTop.getSelectionModel().isEmpty()) {
+            sortPrioBtn.setStyle("-fx-background-color: #0d66d9");
+            sortDateBtn.setStyle("-fx-background-color: #0a4aa4");
+            TasksFormatter.sortByDate(comboBoxTop.getSelectionModel().getSelectedItem());
+            loadTaskList();
+        }
+    }
+
+    private void sortTasksByPrio(ActionEvent action){
+        if (!comboBoxTop.getSelectionModel().isEmpty()) {
+            sortDateBtn.setStyle("-fx-background-color: #0d66d9");
+            sortPrioBtn.setStyle("-fx-background-color: #0a4aa4");
+            TasksFormatter.sortByPriority(comboBoxTop.getSelectionModel().getSelectedItem());
+            loadTaskList();
+        }
+    }
+
+    private void deleteTaskList(ActionEvent action){
+        if (!comboBoxTop.getSelectionModel().isEmpty()) {
+            try {
+                TasksFormatter.deleteTaskList(comboBoxTop.getSelectionModel().getSelectedItem().getId());
+                comboBoxTop.getItems().remove(comboBoxTop.getSelectionModel().getSelectedItem());
+            }catch(GeneralSecurityException | IOException e){
+                e.printStackTrace();
+            }
+        }
     }
 
     private void iterate() {

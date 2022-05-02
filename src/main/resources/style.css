@@ -37,6 +37,29 @@
 .topPane{
     -fx-background-color: #6ab8f5;
 }
+.sort-pane{
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #0d66d9;
+    -fx-font-weight: 700;
+}
+.sort-button{
+    -fx-background-color: #0d66d9;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+    -fx-text-fill: #ffffff;
+}
+.sort-button:hover{
+    -fx-background-color: #0a4aa4;
+}
+.delete-tasklist-button{
+    -fx-background-color: #6ab8f5;
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-text-fill: #ffffff;
+}
+.delete-tasklist-button:hover{
+    -fx-background-color: #0e63ce;
+}
 .taskRow{
     -fx-background-color: #ffffff;
     -fx-border-width: 1px;

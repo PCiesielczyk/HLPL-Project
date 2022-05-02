@@ -81,6 +81,29 @@
                                     </cursor>
                                 </ComboBox>
                                 <Label layoutX="23.0" layoutY="19.0" styleClass="taskListLabel" text="TaskLists:" />
+                        <Pane layoutX="376.0" layoutY="16.0" prefHeight="37.0" prefWidth="204.0" style="-fx-background-color: #fff;" styleClass="sort-pane">
+                           <children>
+                              <Button fx:id="sortDateBtn" layoutX="72.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="66.0" styleClass="sort-button" text="Date">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </Button>
+                              <Button fx:id="sortPrioBtn" layoutX="138.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="66.0" styleClass="sort-button" text="Priority">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </Button>
+                              <Label layoutX="14.0" prefHeight="37.0" prefWidth="52.0" styleClass="sort-pane" text="Sort by:" />
+                           </children>
+                        </Pane>
+                        <Button fx:id="deleteTaskListBtn" layoutX="275.0" layoutY="22.0" mnemonicParsing="false" styleClass="delete-tasklist-button">
+                           <graphic>
+                              <FontAwesomeIcon fill="WHITE" glyphName="MINUS" />
+                           </graphic>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Button>
                             </children>
                         </Pane>
                         <ScrollPane fx:id="scrollPane" centerShape="false" layoutY="67.0" prefHeight="367.0" prefWidth="571.0" snapToPixel="false" AnchorPane.bottomAnchor="65.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="67.0">

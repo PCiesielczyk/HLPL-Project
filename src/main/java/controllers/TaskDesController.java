@@ -17,13 +17,15 @@ import tasks.TasksFormatter;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Optional;
 
 public class TaskDesController {
 
-    TaskCreator task;
-    GridPane grid;
+    private TaskCreator task;
+    private GridPane grid;
+    private Label timeTxt;
 
     @FXML
     private Button dateBtn;
@@ -37,9 +39,10 @@ public class TaskDesController {
     @FXML
     private Button addSubTaskBtn;
 
-    public void setData(TaskCreator task, GridPane grid) {
+    public void setData(TaskCreator task, GridPane grid, Label timeTxt) {
         this.task = task;
         this.grid = grid;
+        this.timeTxt = timeTxt;
         textArea.setText(task.getDetails());
         if (task.getLocalDateTime() != null) {
 
@@ -92,6 +95,7 @@ public class TaskDesController {
                 if (task.getLocalDateTime() != null) {
                     timeBtn.setText(task.getTime());
                     dateBtn.setText(TaskCreator.dateShow(task.getLocalDateTime()));
+                    setTimeTxt();
 
                     new Thread(new Runnable() {
                         @Override
@@ -147,6 +151,20 @@ public class TaskDesController {
 
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void setTimeTxt(){
+        String txt = TaskCreator.remainingTime(task.getLocalDateTime(), task.getTime());
+        timeTxt.setText(txt);
+        if (txt.equals("Time's up")){
+            timeTxt.setStyle("-fx-text-fill: #ff0000");
+        }
+        else if (txt.length()>14){
+            timeTxt.setStyle("-fx-text-fill: #bb4304");
+        }
+        else {
+            timeTxt.setStyle("-fx-text-fill: #000000");
         }
     }
 

@@ -172,8 +172,8 @@ public class TaskCreator {
 
     public static String remainingTime (LocalDateTime localDateTime, String time) {
 
-        if (localDateTime == null || time == null) {
-            return "Time not set";
+        if (localDateTime == null || time.equals("") || time == null) {
+            return "";
         }
 
         int hours;
@@ -191,9 +191,11 @@ public class TaskCreator {
         } else {
             minutes = Integer.parseInt(hoursAndMinutes[1]);
         }
-
+        System.out.println("1: " + localDateTime);
         localDateTime = localDateTime.with(LocalTime.of(hours, minutes));
+        System.out.println("2" + localDateTime);
         LocalDateTime now = LocalDateTime.now();
+        System.out.println("3: " + now);
 
         if (now.isAfter(localDateTime)) {
             return "Time's up";
@@ -201,13 +203,19 @@ public class TaskCreator {
 
             long days = now.until(localDateTime, ChronoUnit.DAYS);
             now = now.plusDays(days);
+            System.out.println(days);
 
             long hoursUntil = now.until(localDateTime, ChronoUnit.HOURS);
             now = now.plusHours(hoursUntil);
 
             long minutesUntil = now.until(localDateTime, ChronoUnit.MINUTES);
 
-            return String.format("Remains: %s day(s), %s hour(s) and %s minute(s)", days, hoursUntil, minutesUntil);
+            if (days>0)
+                return String.format("%s day(s)", days) + " left";
+            else if (hoursUntil>0)
+                return String.format("%s h %s m", hoursUntil, minutesUntil) + " left";
+            else
+                return String.format("%s minute(s)", minutesUntil) + " left";
         }
     }
 }
