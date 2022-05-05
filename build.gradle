@@ -1,13 +1,8 @@
 plugins {
+    id 'java'
+    id 'application'
     id "org.openjfx.javafxplugin" version "0.0.12"
 }
-
-apply plugin: 'java'
-apply plugin: 'application'
-
-mainClassName = 'TasksMain'
-sourceCompatibility = 15
-targetCompatibility = 15
 
 version = '1.0'
 

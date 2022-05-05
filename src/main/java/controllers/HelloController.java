@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import operationResolver.OperationResolver;
 import tasks.TaskCreator;
 import tasks.TasksFormatter;
 import tasks.TasksList;
@@ -71,11 +72,14 @@ public class HelloController implements Initializable {
 
     List<TasksList> taskLists;
     List<TaskCreator> completedTaskList;
+    OperationResolver operationResolver;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         taskLists = new ArrayList<>();
         completedTaskList = new ArrayList<>();
+        this.operationResolver = new OperationResolver();
+        operationResolver.start();
         iterate();
         taskLists.addAll(TasksMain.tasksListsToShow);
         comboBoxTop.getItems().addAll(taskLists);
@@ -102,7 +106,7 @@ public class HelloController implements Initializable {
 
                 TaskController taskController = fxmlLoader.getController();
                 taskController.setData(comboBoxTop.getValue().getTasks().get(i), grid, comboBoxTop,
-                        comboBoxTop.getValue(), completedTaskList);
+                        comboBoxTop.getValue(), completedTaskList, operationResolver);
 
                 grid.add(anchorPane, 0, i);
                 grid.setMargin(anchorPane, new Insets(4, 0, 0, 4));
@@ -142,17 +146,18 @@ public class HelloController implements Initializable {
             try {
                 TaskCreator task = new TaskCreator();
 
-                new Thread(new Runnable() {
+                operationResolver.addRunnable(new Runnable() {
                     @Override
                     public void run() {
                         try {
                             TasksFormatter.newEmptyTask(comboBoxTop.getSelectionModel().getSelectedItem());
-                            task.setId(TasksFormatter.getLatestTask(comboBoxTop.getSelectionModel().getSelectedItem().getId()).getId());
+                            task.setId(TasksFormatter.getLatestTask(comboBoxTop.getSelectionModel().getSelectedItem()
+                                    .getId()).getId());
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
-                }).start();
+                });
 
                 comboBoxTop.getSelectionModel().getSelectedItem().getTasks().add(0, task);
                 if (grid.getChildren().size() > 0) {

@@ -13,6 +13,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.util.Duration;
 
+import operationResolver.OperationResolver;
 import tasks.DatabaseQueries;
 import tasks.SubTaskCreator;
 import tasks.TaskCreator;
@@ -32,11 +33,13 @@ public class SubTaskController {
     private SubTaskCreator subTask;
     private TaskCreator task;
     private GridPane grid;
+    private OperationResolver operationResolver;
 
-    public void setData(SubTaskCreator subTask, TaskCreator task, GridPane grid){
+    public void setData(SubTaskCreator subTask, TaskCreator task, GridPane grid, OperationResolver operationResolver){
         this.subTask = subTask;
         this.task = task;
         this.grid = grid;
+        this.operationResolver = operationResolver;
         textField.setText(subTask.getTitle());
 
         textField.focusedProperty().addListener((obs, oldVal, newVal) -> {
@@ -51,16 +54,16 @@ public class SubTaskController {
 
         subTask.setTitle(textField.getText());
 
-        new Thread(new Runnable() {
+        operationResolver.addRunnable(new Runnable() {
             @Override
             public void run() {
                 try {
                     TasksFormatter.updateSubTask(subTask.getId(), textField.getText());
-                } catch (GeneralSecurityException | IOException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-        }).start();
+        });
 
     }
 
@@ -79,16 +82,16 @@ public class SubTaskController {
                 task.getCompletedSubTasks().add(subTask);
                 task.getSubTasks().remove(subTask);
 
-                new Thread(new Runnable() {
+                operationResolver.addRunnable(new Runnable() {
                     @Override
                     public void run() {
                         try {
                             TasksFormatter.deleteSubTask(subTask.getId());
-                        } catch (GeneralSecurityException | IOException e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
-                }).start();
+                });
 
             }
         });

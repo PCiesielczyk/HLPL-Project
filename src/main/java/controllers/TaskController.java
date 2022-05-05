@@ -18,7 +18,10 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.logging.LoggingPermission;
 
+import jdk.dynalink.Operation;
+import operationResolver.OperationResolver;
 import tasks.DatabaseQueries;
 import tasks.TaskCreator;
 import tasks.TasksFormatter;
@@ -62,9 +65,11 @@ public class TaskController{
     private List completedTaskList;
     private FadeTransition fadeTransition = new FadeTransition();
     private boolean extended = false;
+    private OperationResolver operationResolver;
 
 
-    public void setData(TaskCreator task, GridPane grid, ComboBox comboBox, TasksList taskList, List completedTaskList) {
+    public void setData(TaskCreator task, GridPane grid, ComboBox comboBox, TasksList taskList, List completedTaskList,
+                        OperationResolver operationResolver) {
         this.task = task;
         textField.setText(task.getTitle());
 //        priorityLabel.setText(String.valueOf(task.getPriority()));
@@ -74,6 +79,7 @@ public class TaskController{
         this.comboBox = comboBox;
         this.taskList = taskList;
         this.completedTaskList = completedTaskList;
+        this.operationResolver = operationResolver;
         setTimeTxt();
         checkBoxTask.setOnAction(this::deleteTask);
 //        this.textField.setOnMouseClicked(e -> textField.selectAll());
@@ -85,16 +91,16 @@ public class TaskController{
             if (!newVal) {
                 this.task.setTitle(textField.getText());
 
-                new Thread(new Runnable() {
+                operationResolver.addRunnable(new Runnable() {
                     @Override
                     public void run() {
                         try {
                             TasksFormatter.updateTitle(taskList.getId(), task.getId(), textField.getText());
-                        } catch (GeneralSecurityException | IOException e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
-                }).start();
+                });
 
             }
         });
@@ -124,16 +130,16 @@ public class TaskController{
                 grid.getChildren().remove(taskList.getTasks().indexOf(task));
                 taskList.getTasks().remove(task);
 
-                new Thread(new Runnable() {
+                operationResolver.addRunnable(new Runnable() {
                     @Override
                     public void run() {
                         try {
                             TasksFormatter.completeTask(task.getId());
-                        } catch (GeneralSecurityException | IOException e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
-                }).start();
+                });
 
             }
         });
@@ -214,7 +220,7 @@ public class TaskController{
                 fxmlLoader2.setLocation(getClass().getResource("../taskDes.fxml"));
                 AnchorPane anchorPane2 = fxmlLoader2.load();
                 TaskDesController taskDesController = fxmlLoader2.getController();
-                taskDesController.setData(task, gridSubTask, timeTxt);
+                taskDesController.setData(task, gridSubTask, timeTxt, operationResolver);
                 gridSubTask.add(anchorPane2, 0, 0);
                 for (int i=1;i<=task.getSubTasks().size();i++){
                     FXMLLoader fxmlLoader = new FXMLLoader();
@@ -222,7 +228,7 @@ public class TaskController{
                     AnchorPane anchorPane = fxmlLoader.load();
 
                     SubTaskController subTaskController = fxmlLoader.getController();
-                    subTaskController.setData(task.getSubTasks().get(i-1), task, gridSubTask);
+                    subTaskController.setData(task.getSubTasks().get(i-1), task, gridSubTask, operationResolver);
 
                     gridSubTask.add(anchorPane, 0, i);
                     gridSubTask.setMargin(anchorPane, new Insets(0, 0, 4, 20));

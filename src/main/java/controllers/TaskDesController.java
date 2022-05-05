@@ -9,6 +9,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 
+import operationResolver.OperationResolver;
 import tasks.DatabaseQueries;
 import tasks.SubTaskCreator;
 import tasks.TaskCreator;
@@ -16,6 +17,8 @@ import tasks.TasksFormatter;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.sql.SQLException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -26,6 +29,7 @@ public class TaskDesController {
     private TaskCreator task;
     private GridPane grid;
     private Label timeTxt;
+    private OperationResolver operationResolver;
 
     @FXML
     private Button dateBtn;
@@ -39,10 +43,11 @@ public class TaskDesController {
     @FXML
     private Button addSubTaskBtn;
 
-    public void setData(TaskCreator task, GridPane grid, Label timeTxt) {
+    public void setData(TaskCreator task, GridPane grid, Label timeTxt, OperationResolver operationResolver) {
         this.task = task;
         this.grid = grid;
         this.timeTxt = timeTxt;
+        this.operationResolver = operationResolver;
         textArea.setText(task.getDetails());
         if (task.getLocalDateTime() != null) {
 
@@ -64,7 +69,7 @@ public class TaskDesController {
     private void updateDescription() {
         task.setDetails(textArea.getText());
 
-        new Thread(new Runnable() {
+        operationResolver.addRunnable(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -73,7 +78,7 @@ public class TaskDesController {
                     e.printStackTrace();
                 }
             }
-        }).start();
+        });
 
     }
 
@@ -97,7 +102,8 @@ public class TaskDesController {
                     dateBtn.setText(TaskCreator.dateShow(task.getLocalDateTime()));
                     setTimeTxt();
 
-                    new Thread(new Runnable() {
+
+                    operationResolver.addRunnable(new Runnable() {
                         @Override
                         public void run() {
                             try {
@@ -108,7 +114,7 @@ public class TaskDesController {
                                 e.printStackTrace();
                             }
                         }
-                    }).start();
+                    });
 
 //                    TasksFormatter.updateDate(task.getId(), dateBtn.getText());
 //
@@ -124,18 +130,18 @@ public class TaskDesController {
         try {
             SubTaskCreator subTask = new SubTaskCreator();
 
-            new Thread(new Runnable() {
+            operationResolver.addRunnable(new Runnable() {
                 @Override
                 public void run() {
-                    try{
+                    try {
                         TasksFormatter.newEmptySubTask(task.getId());
 
                         subTask.setId(TasksFormatter.getLatestTask(TasksFormatter.getListIdByTaskId(task.getId())).getId());
-                    }catch(Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
-            }).start();
+            });
 
             task.getSubTasks().add(subTask);
 
@@ -144,7 +150,7 @@ public class TaskDesController {
             AnchorPane anchorPane = fxmlLoader.load();
 
             SubTaskController subTaskController = fxmlLoader.getController();
-            subTaskController.setData(subTask, task, grid);
+            subTaskController.setData(subTask, task, grid, operationResolver);
 
             grid.add(anchorPane, 0, grid.getRowCount());
             grid.setMargin(anchorPane, new Insets(0, 0, 4, 20));
