@@ -1,9 +1,23 @@
-## Zadania
-1. Wypisz tytuły wszystkich usuniętych zadań z aplikacji Google Tasks
-   - Upewnij się, że usunięte zadania są brane pod uwagę podczas inicjalizacji list  
-2. Napisz funkcję, która stworzy w liście domyślnej („@default”) 10 zadań o tytułach kolejno 1, 2, ..., 10
-   - Wzoruj się na funkcji `newEmptyTask` z klasy *TaskFormatter*  
-3. Usuń wszystkie podzadania z wszystkich list zadań.
-   - Wzoruj się na funkcji `deleteSubTask` z klasy *TaskFormatter*
----
-[Dokumentacja Google Tasks API dla Javy](https://googleapis.dev/java/google-api-services-tasks/latest/index.html)
+## Overview
+Simple to-do list using Google API for "High-Level Programming Languanges" on AGH UST.
+
+## Technologies
+Project is created with:
+* Java SE 17
+* Gradle 7.1
+* JavaFX 17.0.1
+* Tasks API v1-rev20210709-1.32.1
+* google-oauth-client 1.32.1
+* MySQL Connector Java 5.1.13
+
+## Authorization
+On a startup the application will ask to choose user's Google account to access Google Tasks.
+
+<img src="/images/oauth2.png" alt="oauth2" width="300" height="400">
+
+After that the access token will be generated and there will be no need for re-authorization.
+
+## Usage
+The application allows tu use the functionality of Google Tasks and extends it with prioritize tasks, sort by priority or by date and show remaining time to completion. Every operation of inserting, updating or deletion task or tasks list will be uploaded to Google Tasks application.
+
+<img src="/images/gui.png" alt="gui" width="700" height="400">
